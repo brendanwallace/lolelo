@@ -1,0 +1,72 @@
+{% load static %}
+
+<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="{% static 'core/core.css' %}"></link>
+
+<header>
+  lol elo
+</header>
+
+<div class="intro">
+  <!-- TODO - implement this: -->
+  <p class="timestamp">UPDATED JUL. 4, 2017 AT 4:42 PM</p>
+  <h1>2017 NA LCS Predictions</h1>
+  <h2>Updated as often as I can get to it.</h2>
+</div>
+
+<div class="content">
+<div class="nav">
+  <a id="standings-select" class="selected">Standings</a>
+  <a id="upcoming-select" class="">Upcoming Matches</a>
+</div>
+
+<table id="standings" class="">
+  <tr class="heading">
+    <th class="team">Team</th>
+    <th class="rating">Elo Rating</th>
+    <th class="match_wins">Match Record</th>
+    <th class="game_wins">Game Record</th>
+    <th class="make_playoffs">Make Playoffs</th>
+    <th class="win_splits">Win Split</th>
+    <th class="qualify_for_worlds">Qualify for Worlds</th>
+  </tr>
+  {% for team in teams %}
+  <tr>
+    <td class="team">
+      <img class="team-icon" src="{% get_static_prefix %}core/{{ team.name }}.png"/>
+      <span class="team">{{ team.name }}</span>
+    </td>
+    <td class="rating">{{ team.rating }}</td>
+    <td class="match_wins">{{ team.match_wins }} - {{ team.match_losses }}</td>
+    <td class="game_wins">{{ team.game_wins }} - {{ team.game_losses }}</td>
+    <td class="make_playoffs">{{ team.make_playoffs }}</td>
+    <td class="win_splits">{{ team.win_split }}</td>
+    <td class="qualify_for_worlds">{{ team.qualify_for_worlds }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+<div id="upcoming" class="display-none">
+{% for week in match_predictions_by_week %}
+  <h3 class="week">{{ week.title }}</h3>
+  <table class="upcoming">
+  <tr><th></th><th>Chance of winning</th></tr>
+  {% for match in week.matches %}
+    <tr>
+      <td class="match-name">{{ match.team_1 }} vs {{ match.team_2 }}</td>
+      <td class="win-percentages">
+        <img class="team-icon" src="{% get_static_prefix %}core/{{ match.team_1 }}.png"/>
+        <span class="team">{{ match.team_1_win_p }}</span>
+        <img class="team-icon" src="{% get_static_prefix %}core/{{ match.team_2 }}.png"/>
+        <span class="team">{{ match.team_2_win_p }}</span>
+      </td>
+    </tr>
+  {% endfor %}
+  </table>
+{% endfor %}
+</div>
+
+</div>
+
+<script src="{% static 'core/core.js' %}"></script>
+

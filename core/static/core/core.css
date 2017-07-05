@@ -1,0 +1,174 @@
+header {
+    height: 40px;
+    line-height: 40px;
+    border-bottom: 1px solid black;
+    font-size: 20px;
+    padding-left: 15px;
+    font-weight: bold;
+}
+
+body {
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+}
+
+p.timestamp {
+    text-align: center;
+    margin: 10px;
+    font-size: 12px;
+    color: rgb(147, 149, 152);
+}
+
+h1 {
+    text-align: center;
+    font-size: 40px;
+    margin: 0px;
+}
+
+h2 {
+    text-align: center;
+    margin: 0px;
+    font-size: 20px;
+    font-weight: normal;
+}
+
+div.intro {
+    margin: 20px;
+}
+
+div.nav {
+    margin: 40px 0px;
+    text-align: left;
+    height: 50px;
+    border-bottom: 1px solid black;
+}
+
+div.nav a {
+    float: left;
+    width: 150px;
+    height: 40px;
+    background-color: white;
+    box-shadow: none;
+    padding: 0px;
+    margin-right: 10px;
+    border: 1px solid #cdcdcd;
+    text-align: center;
+    font: 'Roboto';
+    font-size: 14px;
+    border-collapse: collapse;
+    line-height: 40px;
+}
+
+div.nav a.selected {
+    border: 1px solid rgb(100, 100, 100);
+    font-weight: bold;
+}
+
+div.nav a:hover {
+    background-color: rgb(240, 240, 240);
+    cursor: pointer;
+}
+
+div.content {
+    width: 1024px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+table#standings {
+    text-align: left;
+    border-collapse: collapse;
+    width: 1024px;
+}
+
+table#standings th {
+    border-bottom: 2px solid black;
+    width: 100px;
+    text-transform: uppercase;
+    font-size: 12px;
+    text-align: right;
+}
+
+table#standings td {
+    line-height: 50px;
+    height: 50px;
+    border-top: 2px solid rgb(230, 230, 230);
+    text-align: right;
+    width: 125px;
+    padding: 0px;
+}
+
+table#standings tr:hover td {
+    border-bottom: 2px solid black;
+    border-top: 2px solid black;
+}
+
+table#standings th.team {
+    width: 210px;
+    text-align: left;
+}
+
+table#standings td.team {
+    width: 210px;
+    text-align: left;
+    height: 50px;
+}
+
+img.team-icon {
+    width: 36px;
+    height: 36px;
+    padding: 7px 2px;
+    display: inline-block;
+    vertical-align: top;
+}
+
+span.team {
+    display: inline;
+    height: 50px;
+    vertical-align: top;
+}
+
+th.class {
+    text-align: center;
+}
+
+div.upcoming {
+    text-align: center;
+
+}
+
+h3.week {
+    text-transform: capitalize;
+    font-size: 30px;
+}
+
+table.upcoming {
+    display: inline-block;
+}
+
+table.upcoming th {
+    text-transform: uppercase;
+    font-size: 12px;
+    text-align: right;
+}
+
+table.upcoming td {
+    border-top: 2px solid rgb(230, 230, 230);
+    line-height: 50px;
+    height: 50px;
+}
+
+table.upcoming td.match-name {
+    width: 400px;
+    text-align: left;
+}
+
+table.upcoming td.win-percentages {
+    width: 200px;
+    text-align: right;
+}
+
+.display-none {
+    display: none;
+}
