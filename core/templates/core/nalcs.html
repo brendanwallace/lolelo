@@ -1,11 +1,8 @@
+{% extends 'core/base.html' %}
+
 {% load static %}
 
-<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
-<link rel="stylesheet" type="text/css" href="{% static 'core/core.css' %}"></link>
-
-<header>
-  lol elo
-</header>
+{% block content %}
 
 <div class="intro">
   <!-- TODO - implement this: -->
@@ -70,3 +67,4 @@
 
 <script src="{% static 'core/core.js' %}"></script>
 
+{% endblock %}

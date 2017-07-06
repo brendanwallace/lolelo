@@ -2,9 +2,30 @@ header {
     height: 40px;
     line-height: 40px;
     border-bottom: 1px solid black;
-    font-size: 20px;
     padding-left: 15px;
+}
+
+header span.lolelo {
+    font-size: 20px;
     font-weight: bold;
+}
+
+header a {
+    font-size: 15px;
+    margin-left: 20px;
+    text-transform: lowercase;
+    color: rgb(100, 100, 100); 
+}
+
+header a.selected {
+    color: rgb(60, 60, 60);
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+header a:hover {
+    color: black;
+    cursor: pointer;
 }
 
 body {
@@ -171,4 +192,16 @@ table.upcoming td.win-percentages {
 
 .display-none {
     display: none;
+}
+
+/* about page */
+div.about {
+    text-align: left;
+    padding: 50px 100px;
+}
+
+div.about p {
+}
+
+div.about p.thanks {
 }

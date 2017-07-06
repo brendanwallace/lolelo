@@ -21,7 +21,7 @@ def add_match_predictions(match):
     match.team_2_win_p = '{0:.0f}%'.format(100 * (match.p_0_2 + match.p_1_2))
 
 
-def index(request):
+def nalcs(request):
     # teams:
     teams = core_models.Team.objects.all().order_by('-rating')
     for team in teams:
@@ -45,6 +45,12 @@ def index(request):
 
     context = {
         'teams': teams,
-        'match_predictions_by_week': match_predictions_by_week
+        'match_predictions_by_week': match_predictions_by_week,
+        'predictions_selected': 'selected'
     }
-    return shortcuts.render(request, 'core/index.html', context)
+    return shortcuts.render(request, 'core/nalcs.html', context)
+
+def about(request):
+    return shortcuts.render(request, 'core/about.html', {
+        'about_selected': 'selected',
+    })
