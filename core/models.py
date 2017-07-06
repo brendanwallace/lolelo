@@ -5,10 +5,17 @@ class Team(models.Model):
     def __str__(self):
         return self.name
     rating = models.FloatField(default=0)
+    # Record:
     match_wins = models.IntegerField(default=0)
     match_losses = models.IntegerField(default=0)
     game_wins = models.IntegerField(default=0)
     game_losses = models.IntegerField(default=0)
+    championship_points = models.IntegerField(default=0)
+    # Predictions:
+    make_playoffs = models.FloatField(default=0.0)
+    playoff_bye = models.FloatField(default=0.0)
+    win_split = models.FloatField(default=0.0)
+    qualify_for_worlds = models.FloatField(default=0.0)
 
 
 class Season(models.Model):

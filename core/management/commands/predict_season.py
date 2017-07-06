@@ -7,4 +7,4 @@ def expected_outcome(team_1_score, team_2_score):
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        util.calculate_ratings()
+        util.predict_season()

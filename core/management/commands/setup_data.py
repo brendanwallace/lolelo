@@ -20,16 +20,16 @@ class Command(BaseCommand):
         setup()
 
 def setup():
-    C9, _ = core_models.Team.objects.get_or_create(name="Cloud9")
-    CLG, _ = core_models.Team.objects.get_or_create(name="Counter Logic Gaming")
+    C9, _ = core_models.Team.objects.get_or_create(name="Cloud9", championship_points=70)
+    CLG, _ = core_models.Team.objects.get_or_create(name="Counter Logic Gaming", championship_points=10)
     IMT, _ = core_models.Team.objects.get_or_create(name="Immortals")
-    DIG, _ = core_models.Team.objects.get_or_create(name="Team Dignitas")
-    TSM, _ = core_models.Team.objects.get_or_create(name="Team SoloMid")
+    DIG, _ = core_models.Team.objects.get_or_create(name="Team Dignitas", championship_points=10)
+    TSM, _ = core_models.Team.objects.get_or_create(name="Team SoloMid", championship_points=90)
     nV, _ = core_models.Team.objects.get_or_create(name="Team Envy")
     FOX, _ = core_models.Team.objects.get_or_create(name="Echo Fox")
     TL, _ = core_models.Team.objects.get_or_create(name="Team Liquid")
-    FLY, _ = core_models.Team.objects.get_or_create(name="Flyquest")
-    P1, _ = core_models.Team.objects.get_or_create(name="Phoenix 1")
+    FLY, _ = core_models.Team.objects.get_or_create(name="Flyquest", championship_points=30)
+    P1, _ = core_models.Team.objects.get_or_create(name="Phoenix 1", championship_points=50)
 
     teams = [C9, CLG, IMT, DIG, TSM, nV, FOX, TL, FLY, P1]
 
