@@ -107,4 +107,4 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATIC_ROOT = '/var/www/lolelo.gg/static/'
+STATIC_ROOT = '/home/brendan/devel/lolelo/static/'
