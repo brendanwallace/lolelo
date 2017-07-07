@@ -8,6 +8,8 @@ from django.core.management.base import BaseCommand
 
 from core import models as core_models
 
+from django.db import transaction
+
 
 K_FACTOR = 20
 LOGISTIC_PARAMETER = 400
@@ -22,6 +24,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         setup()
 
+@transaction.atomic
 def setup():
     C9, _ = core_models.Team.objects.get_or_create(name="Cloud9", spring_championship_points=70)
     CLG, _ = core_models.Team.objects.get_or_create(name="Counter Logic Gaming", spring_championship_points=10)
