@@ -5,6 +5,10 @@ header {
     padding-left: 15px;
 }
 
+footer {
+    height: 40px;
+}
+
 header span.lolelo {
     font-size: 20px;
     font-weight: bold;
@@ -33,10 +37,11 @@ body {
     font-family: 'Roboto', sans-serif;
 }
 
-p.timestamp {
+p.last-updated {
     text-align: center;
-    margin: 10px;
-    font-size: 12px;
+    text-transform: uppercase;
+    margin: 0px;
+    font-size: 16px;
     color: rgb(147, 149, 152);
 }
 

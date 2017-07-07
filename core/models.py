@@ -11,11 +11,15 @@ class Team(models.Model):
     game_wins = models.IntegerField(default=0)
     game_losses = models.IntegerField(default=0)
     championship_points = models.IntegerField(default=0)
+    # this is pretty bad:
+    spring_championship_points = models.IntegerField(default=0)
     # Predictions:
     make_playoffs = models.FloatField(default=0.0)
     playoff_bye = models.FloatField(default=0.0)
     win_split = models.FloatField(default=0.0)
     qualify_for_worlds = models.FloatField(default=0.0)
+
+    last_updated = models.DateTimeField(auto_now=True)
 
 
 class Season(models.Model):
@@ -24,7 +28,7 @@ class Season(models.Model):
     def __str__(self):
         return self.name
 
-# Scheduled match -- doesn't contain results
+
 class Match(models.Model):
     team_1 = models.ForeignKey('Team', related_name='team_1_match')
     team_2 = models.ForeignKey('Team', related_name='team_2_match')

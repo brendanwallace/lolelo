@@ -1,3 +1,6 @@
+"""
+This is kind of a quick fix to avoid having to reenter data.
+"""
 import datetime
 import math
 
@@ -20,16 +23,16 @@ class Command(BaseCommand):
         setup()
 
 def setup():
-    C9, _ = core_models.Team.objects.get_or_create(name="Cloud9", championship_points=70)
-    CLG, _ = core_models.Team.objects.get_or_create(name="Counter Logic Gaming", championship_points=10)
+    C9, _ = core_models.Team.objects.get_or_create(name="Cloud9", spring_championship_points=70)
+    CLG, _ = core_models.Team.objects.get_or_create(name="Counter Logic Gaming", spring_championship_points=10)
     IMT, _ = core_models.Team.objects.get_or_create(name="Immortals")
-    DIG, _ = core_models.Team.objects.get_or_create(name="Team Dignitas", championship_points=10)
-    TSM, _ = core_models.Team.objects.get_or_create(name="Team SoloMid", championship_points=90)
+    DIG, _ = core_models.Team.objects.get_or_create(name="Team Dignitas", spring_championship_points=10)
+    TSM, _ = core_models.Team.objects.get_or_create(name="Team SoloMid", spring_championship_points=90)
     nV, _ = core_models.Team.objects.get_or_create(name="Team Envy")
     FOX, _ = core_models.Team.objects.get_or_create(name="Echo Fox")
     TL, _ = core_models.Team.objects.get_or_create(name="Team Liquid")
-    FLY, _ = core_models.Team.objects.get_or_create(name="Flyquest", championship_points=30)
-    P1, _ = core_models.Team.objects.get_or_create(name="Phoenix 1", championship_points=50)
+    FLY, _ = core_models.Team.objects.get_or_create(name="Flyquest", spring_championship_points=30)
+    P1, _ = core_models.Team.objects.get_or_create(name="Phoenix 1", spring_championship_points=50)
 
     teams = [C9, CLG, IMT, DIG, TSM, nV, FOX, TL, FLY, P1]
 

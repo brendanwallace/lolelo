@@ -5,6 +5,8 @@ import random
 
 from core import models as core_models
 
+from django.db import transaction
+
 K_FACTOR = 20
 LOGISTIC_PARAMETER = 400
 INITIAL_RATING = 1500
@@ -13,76 +15,18 @@ SEASONS_TO_SIMULATE = 10000
 
 MATCHES_ONLY = False
 
+def expected_outcome(team_1_rating, team_2_rating):
+    """
+    Given two teams' elo ratings, return the likelihood of the first winning.
 
-def expected_outcome(team_1_score, team_2_score):
-  return 1 / (1 + math.pow(10, ((team_2_score- team_1_score) / LOGISTIC_PARAMETER)))
-
-def calculate_ratings():
-    teams = {
-        team: team
-        for team in core_models.Team.objects.all()
-    }
-    # reset ratings and everything:
-    for team in teams:
-        team.rating = INITIAL_RATING
-        team.game_wins = 0
-        team.game_losses = 0
-        team.match_wins = 0
-        team.match_losses = 0
-
-    spring_matches = core_models.Match.objects.filter(season__name="Spring 2017").order_by('game_number')
-    for match in spring_matches:
-        if match.team_1_wins + match.team_2_wins > 0:
-            team_1_expected_score = (
-                expected_outcome(teams[match.team_1].rating, teams[match.team_2].rating) *
-                (match.team_1_wins + match.team_2_wins)
-            )
-            # should be the same as (res1 + res2) - team1_expected_score
-            team_2_expected_score = (
-                expected_outcome(teams[match.team_2].rating, teams[match.team_1].rating) *
-                (match.team_1_wins + match.team_2_wins)
-            )
-            teams[match.team_1].rating += K_FACTOR * (match.team_1_wins - team_1_expected_score)
-            teams[match.team_2].rating += K_FACTOR * (match.team_2_wins - team_2_expected_score)
-
-    # regress 50%
-    for team in teams:
-        team.rating = 0.5 * INITIAL_RATING + 0.5 * team.rating
-
-    # calculate summer ratings:
-    summer_matches = core_models.Match.objects.filter(season__name="Summer 2017").order_by('game_number')
-
-    # other summer stuff:
-    for match in summer_matches:
-        if match.team_1_wins + match.team_2_wins > 0:
-            teams[match.team_1].game_wins += match.team_1_wins
-            teams[match.team_1].game_losses += match.team_2_wins
-            teams[match.team_2].game_wins += match.team_2_wins
-            teams[match.team_2].game_losses += match.team_1_wins
-            if match.team_1_wins >= 2 or match.team_2_wins >= 2:
-                if match.team_1_wins > match.team_2_wins:
-                    teams[match.team_1].match_wins += 1
-                    teams[match.team_2].match_losses += 1
-                else:
-                    teams[match.team_2].match_wins += 1
-                    teams[match.team_1].match_losses += 1
-            team_1_expected_score = (
-            expected_outcome(teams[match.team_1].rating, teams[match.team_2].rating) *
-                (match.team_1_wins + match.team_2_wins)
-            )
-            # should be the same as (res1 + res2) - team1_expected_score
-            team_2_expected_score = (
-                expected_outcome(teams[match.team_2].rating, teams[match.team_1].rating) *
-                (match.team_1_wins + match.team_2_wins)
-            )
-            teams[match.team_1].rating += K_FACTOR * (match.team_1_wins - team_1_expected_score)
-            teams[match.team_2].rating += K_FACTOR * (match.team_2_wins - team_2_expected_score)
-
-    for _, team in teams.items():
-        team.save()
-
+    This is basically how elo ratings work, uses a logistic curve.
+    """
+    return 1 / (1 + math.pow(10, ((team_2_rating- team_1_rating) / LOGISTIC_PARAMETER)))
 
 class TeamCopy():
+    """
+    A utility class used to create a copy of a team for simulating the season.
+    """
     def __init__(self, team):
         self.name = team.name
         self.rating = team.rating
@@ -92,6 +36,7 @@ class TeamCopy():
         self.championship_points = team.championship_points
         # copying the dictionary...
         self.head_to_head = {a: b for a, b in team.head_to_head.items()}
+
 
 def compare_team_copy(a, b):
     match_diff = a.match_wins - b.match_wins
@@ -113,10 +58,16 @@ def compare_team_copy(a, b):
     else:
         return -1
 
-# returns winner, loser
-def simulate_match(team_1, team_2, first_to, teams, adjust_records=True, adjust_ratings=True):
 
-    team_1_win_p =  1 / (1 + math.pow(10, ((team_2.rating - team_1.rating) / LOGISTIC_PARAMETER)))
+def simulate_match(
+    team_1, team_2, first_to, teams, adjust_records=True, adjust_ratings=True
+):
+    """
+    Simulates team_1 playing team_2, adjusts records and ratings accordingly.
+
+    Returns a tuple of (winning_team, losing_team).
+    """
+    team_1_win_p =  expected_outcome(team_1.rating, team_2.rating)
 
     # simulate the match:
     team_1_wins = 0
@@ -140,7 +91,6 @@ def simulate_match(team_1, team_2, first_to, teams, adjust_records=True, adjust_
             team_2.match_wins += 1
             team_2.head_to_head[team_1.name] += 1
 
-    # adjust ratings:
     if adjust_ratings:
         games_played = team_1_wins + team_2_wins
         expected_team_1_wins = (
@@ -154,12 +104,81 @@ def simulate_match(team_1, team_2, first_to, teams, adjust_records=True, adjust_
 
     return (team_1, team_2) if team_1_wins > team_2_wins else (team_2, team_1)
 
-def predict_season():
-    # matches played and unplayed (to record head-to-head for tie breaks)
+
+@transaction.atomic
+def update_ratings_and_predictions():
+    """
+    Updates ratings and predictions (to be called after each match).
+
+    In theory it would be possible to do this in an iterative way, but
+    just to avoid any nasty bugs and having to maintain multiple code paths,
+    it just starts from the top for each time.
+    """
+    # Hash by name so that teams and team_copies can look into here. Also
+    # to avoid an issue where modifying match.team_1 (for example) is modifying
+    # a separate object.
+    teams = {
+        team.name: team
+        for team in core_models.Team.objects.all()
+    }
+    spring_matches = core_models.Match.objects.filter(season__name="Spring 2017").order_by('game_number')
     summer_matches = core_models.Match.objects.filter(season__name="Summer 2017").order_by('game_number')
 
-    # initial teams
-    teams = {team.name: team for team in core_models.Team.objects.all()}
+    # reset ratings and everything:
+    for _, team in teams.items():
+        team.rating = INITIAL_RATING
+        team.game_wins = 0
+        team.game_losses = 0
+        team.match_wins = 0
+        team.match_losses = 0
+        team.championship_points = team.spring_championship_points
+
+    for match in spring_matches:
+        if match.team_1_wins + match.team_2_wins > 0:
+            team_1_expected_score = (
+                expected_outcome(teams[match.team_1.name].rating, teams[match.team_2.name].rating) *
+                (match.team_1_wins + match.team_2_wins)
+            )
+            # should be the same as (res1 + res2) - team1_expected_score
+            team_2_expected_score = (
+                expected_outcome(teams[match.team_2.name].rating, teams[match.team_1.name].rating) *
+                (match.team_1_wins + match.team_2_wins)
+            )
+            teams[match.team_1.name].rating += K_FACTOR * (match.team_1_wins - team_1_expected_score)
+            teams[match.team_2.name].rating += K_FACTOR * (match.team_2_wins - team_2_expected_score)
+
+    # regress 50%
+    for _, team in teams.items():
+        team.rating = 0.5 * INITIAL_RATING + 0.5 * team.rating
+
+    # calculate summer ratings:
+
+    # other summer stuff:
+    for match in summer_matches:
+        if match.team_1_wins + match.team_2_wins > 0:
+            teams[match.team_1.name].game_wins += match.team_1_wins
+            teams[match.team_1.name].game_losses += match.team_2_wins
+            teams[match.team_2.name].game_wins += match.team_2_wins
+            teams[match.team_2.name].game_losses += match.team_1_wins
+            if match.team_1_wins >= 2 or match.team_2_wins >= 2:
+                if match.team_1_wins > match.team_2_wins:
+                    teams[match.team_1.name].match_wins += 1
+                    teams[match.team_2.name].match_losses += 1
+                else:
+                    teams[match.team_2.name].match_wins += 1
+                    teams[match.team_1.name].match_losses += 1
+            team_1_expected_score = (
+            expected_outcome(teams[match.team_1.name].rating, teams[match.team_2.name].rating) *
+                (match.team_1_wins + match.team_2_wins)
+            )
+            # should be the same as (res1 + res2) - team1_expected_score
+            team_2_expected_score = (
+                expected_outcome(teams[match.team_2.name].rating, teams[match.team_1.name].rating) *
+                (match.team_1_wins + match.team_2_wins)
+            )
+            teams[match.team_1.name].rating += K_FACTOR * (match.team_1_wins - team_1_expected_score)
+            teams[match.team_2.name].rating += K_FACTOR * (match.team_2_wins - team_2_expected_score)
+
     for _, team in teams.items():
         team.head_to_head = {team.name: 0 for _, team in teams.items()}
         team.make_playoffs = 0.0
@@ -225,13 +244,9 @@ def predict_season():
         finish_5_a.championship_points += 20
         finish_5_b.championship_points += 20
 
-        # print(finish_1.name)
-
         team_copies.remove(finish_1)
         team_copies.sort(key=lambda team_copy: team_copy.championship_points, reverse=True)
         teams[team_copies[0].name].qualify_for_worlds += 1
-        # for team_copy in team_copies:
-        #     print("{} {}".format(team_copy.name, team_copy.championship_points))
 
     # calculate the percentages from that:
     for _, team in teams.items():
@@ -240,6 +255,3 @@ def predict_season():
         team.win_split = team.win_split / SEASONS_TO_SIMULATE
         team.qualify_for_worlds = team.qualify_for_worlds / SEASONS_TO_SIMULATE
         team.save()
-
-
-

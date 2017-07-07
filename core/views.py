@@ -1,4 +1,6 @@
 import math
+import pytz
+
 
 from django import http
 from django import shortcuts
@@ -46,7 +48,8 @@ def nalcs(request):
     context = {
         'teams': teams,
         'match_predictions_by_week': match_predictions_by_week,
-        'predictions_selected': 'selected'
+        'predictions_selected': 'selected',
+        'last_updated': teams[0].last_updated.astimezone(pytz.timezone('US/Pacific')).strftime('%B %d, %Y at %I:%M %p'),
     }
     return shortcuts.render(request, 'core/nalcs.html', context)
 
