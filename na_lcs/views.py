@@ -6,24 +6,31 @@ from django import http
 from django import shortcuts
 
 from na_lcs import models as na_lcs_models
+from na_lcs import util
 
-LOGISTIC_PARAMETER = 400
+def index(request):
+    return shortcuts.redirect('na_lcs')
 
 def add_match_predictions(match):
-    w1 =  1 / (1 + math.pow(10, ((match.team_2.rating- match.team_1.rating) / LOGISTIC_PARAMETER)))
+    w1 =  util.expected_outcome(match.team_1.rating, match.team_2.rating)
     w2 = 1 - w1
 
-    match.p_2_0 = w1 * w1
-    match.p_0_2 = w2 * w2
+    p_2_0 = w1 * w1
+    p_0_2 = w2 * w2
 
-    match.p_2_1 = w1*w2*w1 + w2*w1*w1
-    match.p_1_2 = w2*w1*w2 + w1*w2*w2
+    p_2_1 = w1*w2*w1 + w2*w1*w1
+    p_1_2 = w2*w1*w2 + w1*w2*w2
 
-    match.team_1_win_p = '{0:.0f}%'.format(100 * (match.p_2_0 + match.p_2_1))
-    match.team_2_win_p = '{0:.0f}%'.format(100 * (match.p_0_2 + match.p_1_2))
+    match.team_1_win_p = '{0:.0f}%'.format(100 * (p_2_0 + p_2_1))
+    match.team_2_win_p = '{0:.0f}%'.format(100 * (p_0_2 + p_1_2))
+
+    match.p_2_0 = '{0:.0f}%'.format(100 * p_2_0)
+    match.p_2_1 = '{0:.0f}%'.format(100 * p_2_1)
+    match.p_1_2 = '{0:.0f}%'.format(100 * p_1_2)
+    match.p_0_2 = '{0:.0f}%'.format(100 * p_0_2)
 
 
-def nalcs(request):
+def na_lcs(request):
     # teams:
     teams = na_lcs_models.Team.objects.all().order_by('-rating')
     for team in teams:
