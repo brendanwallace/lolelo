@@ -21,7 +21,7 @@ def expected_outcome(team_1_rating, team_2_rating):
 
     This is basically how elo ratings work, uses a logistic curve.
     """
-    return 1 / (1 + math.pow(10, ((team_2_rating- team_1_rating) / LOGISTIC_PARAMETER)))
+    return 1 / (1 + math.pow(10, ((team_2_rating - team_1_rating) / LOGISTIC_PARAMETER)))
 
 class TeamCopy():
     """

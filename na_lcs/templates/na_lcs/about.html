@@ -2,19 +2,41 @@
 
 {% block content %}
 <div class="about">
+    <p class="question">
+    What is it?
+    </p>
     <p class="answer">
     lolelo.gg is a website that makes predictions about the NA LCS using the
     <a href="https://en.wikipedia.org/wiki/Elo_rating_system">Elo rating system</a>.
     </p>
-    <p class="thanks">
-    Credit to <a href="https://fivethirtyeight.com/">fivethirtyeight.com<a>
-    for their detailed explanations of how they tuned their models, which were
-    extremely helpful, and for their very nicely styled prediction tables, which
-    I pretty much completely copied.
+    <p class="question">
+    How does it work?
     </p>
-    <p class="author">
+    <p class="answer">
+    The elo system determines a rating for every team, and the difference
+    between two teams' ratings gives a prediction of how likely each team is to
+    win. Roughly: for each 400 points' difference, the lower rated team is 10
+    times less likely to win.
+    </p>
+    <p class="answer">
+    The predictions (e.g. how likely a team is to qualify for Worlds) are made
+    by randomly simulating all the unplayed matches in the season a bunch of
+    times, and seeing how many times each outcome happened. Divide that number
+    by the number of times everything was simulated and you end up with roughly
+    how likely something is to happen.
+    </p>
+    <p class="question">
+    About the author
+    </p>
+    <p class="answer">
     lolelo.gg is written and maintained by
     <a href="https://twitter.com/brendanxwallace">Brendan Wallace</a>.
+    </p>
+    <p class="answer">
+    Credit to <a href="https://fivethirtyeight.com/">fivethirtyeight.com<a>
+    for their detailed explanations of how they tuned their own elo models,
+    which were extremely helpful, and for their very nicely styled prediction
+    tables, which I based mine off of.
     </p>
 </div>
 {% endblock %}

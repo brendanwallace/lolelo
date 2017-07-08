@@ -205,8 +205,13 @@ div.about {
     padding: 50px 100px;
 }
 
-div.about p {
+div.about p.question {
+    font-size: 30px;
+    font-weight: bold;
+    text-transform: lowercase;
+    letter-spacing: -2px;
 }
 
-div.about p.thanks {
+div.about p.answer {
+    font-size: 20px;
 }

@@ -7,5 +7,4 @@ from na_lcs import util
 
 @dispatch.receiver(signals.post_save, sender=na_lcs_models.Match)
 def update_after_match_save(sender, **kwargs):
-    pass
-    #util.update_ratings_and_predictions()
+    util.update_ratings_and_predictions()
