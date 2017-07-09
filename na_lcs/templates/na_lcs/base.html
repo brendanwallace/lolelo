@@ -5,6 +5,7 @@
 <head>
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{% static 'na_lcs/na_lcs.css' %}"></link>
+    <link rel="shortcut icon" href="{% static 'favicon/lolelo.png' %}"></link>
     <title>{% block title %}lolelo.gg{% endblock %}</title>
     <!-- google analytics -->
     <script>
@@ -21,6 +22,7 @@
 <body>
     
     <header>
+      <img class="loleloicon-header" src="{% get_static_prefix %}na_lcs/loleloicon.png" />
       <span class="lolelo">lolelo.gg</span>
       <a href="/" class="{{ predictions_selected }}">NA LCS Predictions</a>
       <a href="about" class="{{ about_selected }}">about</a>
