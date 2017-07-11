@@ -81,3 +81,5 @@ tds.selectAll('span')
     .enter()
     .append('span')
     .text(function(d) { return d.value.display });
+
+d3.select(".rating").classed("descending", true);

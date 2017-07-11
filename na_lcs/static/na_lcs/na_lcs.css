@@ -130,6 +130,7 @@ table.standings th {
 
 table.standings th:hover {
     cursor: pointer;
+    background-color: rgb(220, 220, 220);
 }
 
 table.standings td {
@@ -142,8 +143,8 @@ table.standings td {
 }
 
 table.standings tr:hover td {
-    border-bottom: 2px solid black;
-    border-top: 2px solid black;
+    border-bottom: 2px solid rgb(150, 150, 150);
+    border-top: 2px solid rgb(150, 150, 150);
 }
 
 table.standings th.team {
