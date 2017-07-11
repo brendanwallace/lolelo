@@ -113,21 +113,26 @@ div.content {
     text-align: center;
 }
 
-table#standings {
+table.standings {
     text-align: left;
     border-collapse: collapse;
     width: 1024px;
 }
 
-table#standings th {
+table.standings th {
     border-bottom: 2px solid black;
     width: 100px;
     text-transform: uppercase;
     font-size: 12px;
     text-align: right;
+    padding-right: 12px;
 }
 
-table#standings td {
+table.standings th:hover {
+    cursor: pointer;
+}
+
+table.standings td {
     line-height: 50px;
     height: 50px;
     border-top: 2px solid rgb(230, 230, 230);
@@ -136,17 +141,30 @@ table#standings td {
     padding: 0px;
 }
 
-table#standings tr:hover td {
+table.standings tr:hover td {
     border-bottom: 2px solid black;
     border-top: 2px solid black;
 }
 
-table#standings th.team {
+table.standings th.team {
     width: 210px;
     text-align: left;
+    padding-right: 0px;
 }
 
-table#standings td.team {
+table.standings th.descending, table.standings th.ascending {
+    padding-right: 0px;
+}
+
+table.standings th.descending:after {
+    content: "▼";
+}
+
+table.standings th.ascending:after {
+    content: "▲";
+}
+
+table.standings td.team {
     width: 210px;
     text-align: left;
     height: 50px;

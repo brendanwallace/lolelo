@@ -34,10 +34,10 @@ def na_lcs(request):
     # teams:
     teams = na_lcs_models.Team.objects.all().order_by('-rating')
     for team in teams:
-        team.rating = '{0:.0f}'.format(team.rating)
-        team.make_playoffs = '{:.1f}%'.format(team.make_playoffs * 100)
-        team.win_split = '{:.1f}%'.format(team.win_split * 100)
-        team.qualify_for_worlds = '{:.1f}%'.format(team.qualify_for_worlds * 100)
+        team.rating_display = '{0:.0f}'.format(team.rating)
+        team.make_playoffs_display = '{:.1f}%'.format(team.make_playoffs * 100)
+        team.win_split_display = '{:.1f}%'.format(team.win_split * 100)
+        team.qualify_for_worlds_display = '{:.1f}%'.format(team.qualify_for_worlds * 100)
 
     # matches:
     match_predictions_by_week = []

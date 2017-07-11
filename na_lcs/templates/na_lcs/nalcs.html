@@ -16,30 +16,11 @@
   <a id="upcoming-select" class="">Upcoming Matches</a>
 </div>
 
-<table id="standings" class="">
-  <tr class="heading">
-    <th class="team">Team</th>
-    <th class="rating">Elo Rating</th>
-    <th class="match_wins">Match Record</th>
-    <th class="game_wins">Game Record</th>
-    <th class="make_playoffs">Make Playoffs</th>
-    <th class="win_splits">Win Split</th>
-    <th class="qualify_for_worlds">Qualify for Worlds</th>
-  </tr>
-  {% for team in teams %}
-  <tr>
-    <td class="team">
-      <img class="team-icon" src="{% get_static_prefix %}na_lcs/{{ team.name }}.png"/>
-      <span class="team">{{ team.name }}</span>
-    </td>
-    <td class="rating">{{ team.rating }}</td>
-    <td class="match_wins">{{ team.match_wins }} - {{ team.match_losses }}</td>
-    <td class="game_wins">{{ team.game_wins }} - {{ team.game_losses }}</td>
-    <td class="make_playoffs">{{ team.make_playoffs }}</td>
-    <td class="win_splits">{{ team.win_split }}</td>
-    <td class="qualify_for_worlds">{{ team.qualify_for_worlds }}</td>
-  </tr>
-  {% endfor %}
+<table id="nalcs_standings_table" class="standings">
+  <thead>
+    <tr class="heading" id="nalcs_standings_headings_row">
+    </tr>
+  </thead>
 </table>
 
 <div id="upcoming" class="display-none">
@@ -64,6 +45,45 @@
 
 </div>
 
+<script src="{% static 'na_lcs/d3.min.js' %}"></script>
+<script>
+  // This is kind of a hack to avoid making a JSON request to the server.
+  var nalcs_standings_data = [
+  {% for team in teams %}
+    {
+      team: {
+        display: "{{ team.name }}",
+        sort: "{{ team.name }}",
+        icon: "{% get_static_prefix %}na_lcs/{{ team.name }}.png",
+      },
+      rating: {
+        display: {{ team.rating_display }},
+        sort: {{ team.rating }},
+      },
+      matchRecord: {
+        display: "{{ team.match_wins }} - {{ team.match_losses }}",
+        sort: {{ team.match_wins }} / ({{ team.match_wins }} + {{ team.match_losses }}),
+      },
+      gameRecord: {
+        display: "{{ team.game_wins }} - {{ team.game_losses }}",
+        sort: {{ team.game_wins }} / ({{ team.game_wins }} + {{ team.game_losses }}),
+      },
+      makePlayoffs: {
+        display: "{{ team.make_playoffs_display }}",
+        sort: {{ team.make_playoffs }},
+      },
+      winSplit: {
+        display: "{{ team.win_split_display }}",
+        sort: {{ team.win_split }},
+      },
+      qualifyForWorlds: {
+        display: "{{ team.qualify_for_worlds_display }}",
+        sort: {{ team.qualify_for_worlds }},
+      },
+    },
+  {% endfor %}
+  ];
+</script>
 <script src="{% static 'na_lcs/na_lcs.js' %}"></script>
 
 {% endblock %}
