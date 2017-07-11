@@ -93,6 +93,7 @@ div.nav a {
     font-size: 14px;
     border-collapse: collapse;
     line-height: 40px;
+    border-radius: 5px;
 }
 
 div.nav a.selected {
