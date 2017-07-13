@@ -1,0 +1,89 @@
+{% extends 'nalcs/base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<div class="intro">
+  <!-- TODO - implement this: -->
+  <h1>2017 NA LCS Predictions</h1>
+  <p class="last-updated">Last updated {{ last_updated }}</p> <!--JUL. 4, 2017 AT 4:42 PM-->
+</div>
+
+<div class="content">
+<div class="nav">
+  <a id="standings-select" class="selected">Standings</a>
+  <a id="upcoming-select" class="">Upcoming Matches</a>
+</div>
+
+<table id="nalcs_standings_table" class="standings">
+  <thead>
+    <tr class="heading" id="nalcs_standings_headings_row">
+    </tr>
+  </thead>
+</table>
+
+<div id="upcoming" class="display-none">
+{% for week in match_predictions_by_week %}
+  <h3 class="week">{{ week.title }}</h3>
+  <table class="upcoming">
+  <tr><th></th><th>Chance of winning</th></tr>
+  {% for match in week.matches %}
+    <tr>
+      <td class="match-name">{{ match.team_1 }} vs {{ match.team_2 }}</td>
+      <td class="win-percentages">
+        <img class="team-icon" src="{% get_static_prefix %}nalcs/{{ match.team_1 }}.png"/>
+        <span class="team">{{ match.team_1_win_p }}</span>
+        <img class="team-icon" src="{% get_static_prefix %}nalcs/{{ match.team_2 }}.png"/>
+        <span class="team">{{ match.team_2_win_p }}</span>
+      </td>
+    </tr>
+  {% endfor %}
+  </table>
+{% endfor %}
+</div>
+
+</div>
+
+<script src="{% static 'nalcs/d3.min.js' %}"></script>
+<script>
+  // This is kind of a hack to avoid making a JSON request to the server.
+  var nalcs_standings_data = [
+  {% for team in teams %}
+    {
+      team: {
+        display: "{{ team.name }}",
+        sort: "{{ team.name }}",
+        icon: "{% get_static_prefix %}nalcs/{{ team.name }}.png",
+      },
+      rating: {
+        display: {{ team.rating_display }},
+        sort: {{ team.rating }},
+      },
+      matchRecord: {
+        display: "{{ team.match_wins }} - {{ team.match_losses }}",
+        sort: {{ team.match_wins }} / ({{ team.match_wins }} + {{ team.match_losses }}),
+      },
+      gameRecord: {
+        display: "{{ team.game_wins }} - {{ team.game_losses }}",
+        sort: {{ team.game_wins }} / ({{ team.game_wins }} + {{ team.game_losses }}),
+      },
+      makePlayoffs: {
+        display: "{{ team.make_playoffs_display }}",
+        sort: {{ team.make_playoffs }},
+      },
+      winSplit: {
+        display: "{{ team.win_split_display }}",
+        sort: {{ team.win_split }},
+      },
+      qualifyForWorlds: {
+        display: "{{ team.qualify_for_worlds_display }}",
+        sort: {{ team.qualify_for_worlds }},
+      },
+    },
+  {% endfor %}
+  ];
+</script>
+<script src="{% static 'nalcs/nalcs.js' %}"></script>
+
+{% endblock %}

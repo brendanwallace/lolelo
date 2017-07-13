@@ -35,7 +35,7 @@ ALLOWED_HOSTS = [
 # Application definition
 
 INSTALLED_APPS = (
-    'na_lcs.apps.NaLcsConfig',
+    'nalcs.apps.NaLcsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
