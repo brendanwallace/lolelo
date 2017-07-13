@@ -37,6 +37,10 @@ class TeamCopy():
         # copying the dictionary...
         self.head_to_head = {a: b for a, b in team.head_to_head.items()}
 
+    # for debugging
+    def __str__(self):
+        return self.name
+
 
 def compare_team_copy(a, b):
     match_diff = a.match_wins - b.match_wins
@@ -228,11 +232,18 @@ def update_ratings_and_predictions():
         seed_5 = team_copies[4]
         seed_6 = team_copies[5]
 
+        # quarter finals:
         quarter_4_w, finish_5_a = simulate_match(seed_4, seed_5, 3, teams)
         quarter_3_w, finish_5_b = simulate_match(seed_3, seed_6, 3, teams)
+
+        # semis:
         semi_1_w, semi_1_l = simulate_match(seed_1, quarter_4_w, 3, teams)
         semi_2_w, semi_2_l = simulate_match(seed_2, quarter_3_w, 3, teams)
+
+        # finals:
         finish_1, finish_2 = simulate_match(semi_1_w, semi_2_w, 3, teams)
+
+        # 3rd place consolation:
         finish_3, finish_4 = simulate_match(semi_1_l, semi_2_l, 3, teams)
 
         teams[finish_1.name].win_split += 1
@@ -247,6 +258,18 @@ def update_ratings_and_predictions():
         team_copies.remove(finish_1)
         team_copies.sort(key=lambda team_copy: team_copy.championship_points, reverse=True)
         teams[team_copies[0].name].qualify_for_worlds += 1
+
+        # gauntlet:
+        gauntlet_1 = team_copies[1]
+        gauntlet_2 = team_copies[2]
+        gauntlet_3 = team_copies[3]
+        gauntlet_4 = team_copies[4]
+
+        adv, _ = simulate_match(gauntlet_4, gauntlet_3, 3, teams)
+        adv, _ = simulate_match(adv, gauntlet_2, 3, teams)
+        qualify, _ = simulate_match(adv, gauntlet_1, 3, teams)
+
+        teams[qualify.name].qualify_for_worlds += 1
 
     # calculate the percentages from that:
     for _, team in teams.items():
