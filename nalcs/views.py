@@ -11,6 +11,9 @@ from nalcs import util
 def index(request):
     return shortcuts.redirect('nalcs')
 
+def na_lcs(request):
+    return shortcuts.redirect('nalcs')
+
 def add_match_predictions(match):
     w1 =  util.expected_outcome(match.team_1.rating, match.team_2.rating)
     w2 = 1 - w1
