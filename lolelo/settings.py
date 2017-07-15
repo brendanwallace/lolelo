@@ -28,7 +28,7 @@ DEBUG = False
 ALLOWED_HOSTS = [
     'lolelo.gg',
     'www.lolelo.gg',
-    '192.168.1.14',
+    '192.168.0.14',
 ]
 
 
