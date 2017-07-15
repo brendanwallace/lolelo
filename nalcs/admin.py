@@ -5,3 +5,4 @@ from nalcs import models as nalcs_models
 admin.site.register(nalcs_models.Team)
 admin.site.register(nalcs_models.Season)
 admin.site.register(nalcs_models.Match)
+admin.site.register(nalcs_models.DailyPrediction)

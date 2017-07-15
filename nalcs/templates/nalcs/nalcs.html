@@ -57,7 +57,9 @@
         icon: "{% get_static_prefix %}nalcs/{{ team.name }}.png",
       },
       rating: {
-        display: {{ team.rating_display }},
+        display: "{{ team.rating_display }}",
+        delta: "{{ team.rating_delta }}",
+        delta_sign: "{{ team.rating_delta_sign }}",
         sort: {{ team.rating }},
       },
       matchRecord: {
@@ -70,14 +72,20 @@
       },
       makePlayoffs: {
         display: "{{ team.make_playoffs_display }}",
+        delta: "{{ team.make_playoffs_delta }}",
+        delta_sign: "{{ team.make_playoffs_delta_sign }}",
         sort: {{ team.make_playoffs }},
       },
       winSplit: {
         display: "{{ team.win_split_display }}",
+        delta: "{{ team.win_split_delta }}",
+        delta_sign: "{{ team.win_split_delta_sign }}",
         sort: {{ team.win_split }},
       },
       qualifyForWorlds: {
         display: "{{ team.qualify_for_worlds_display }}",
+        delta: "{{ team.qualify_for_worlds_delta }}",
+        delta_sign: "{{ team.qualify_for_worlds_delta_sign }}",
         sort: {{ team.qualify_for_worlds }},
       },
     },

@@ -214,8 +214,8 @@ def setup():
             (TL, CLG, 0, 2),
         ],
         [
-            (CLG, FLY, 0, 0),
-            (IMT, FOX, 0, 0),
+            (CLG, FLY, 2, 0),
+            (IMT, FOX, 2, 0),
             (TSM, P1, 0, 0),
             (CLG, DIG, 0, 0),
             (C9, nV, 0, 0),

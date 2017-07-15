@@ -68,6 +68,7 @@ var tds = rows.selectAll('td')
     .append('td')
     .attr('class', function(d) { return d.key; });
 
+// Add images to the 'team' column.
 tds.filter(function(d) { return d.key === 'team'; })
     .selectAll('img')
     .data(function(d) { return [d]; })
@@ -80,6 +81,10 @@ tds.selectAll('span')
     .data(function(d) { return [d]; })
     .enter()
     .append('span')
-    .text(function(d) { return d.value.display });
+    .text(function(d) { return d.value.display })
+    .append('span')
+    .text(function(d) { return d.value.delta })
+    .attr('class', function(d) { return d.value.delta_sign })
+    .attr('title', "change over previous week");
 
 d3.select(".rating").classed("descending", true);
