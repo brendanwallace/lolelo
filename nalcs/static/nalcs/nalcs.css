@@ -203,10 +203,10 @@ table.standings span.up {
 
 table.standings span.down:before {
     content: "▼";
-    color: red;
+    color: rgb(242, 48, 14);
 }
 table.standings span.down {
-    color: red;
+    color: rgb(242, 48, 14);
 }
 
 table.standings td.team {
