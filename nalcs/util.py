@@ -175,6 +175,7 @@ def update_ratings_and_predictions(date):
         predictions[match.team_2.name].game_wins += match.team_2_wins
         predictions[match.team_2.name].game_losses += match.team_1_wins
         # match record:
+        
         if match.team_1_wins > match.team_2_wins:
             predictions[match.team_1.name].match_wins += 1
             predictions[match.team_2.name].match_losses += 1
