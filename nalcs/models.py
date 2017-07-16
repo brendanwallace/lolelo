@@ -27,8 +27,9 @@ class Match(models.Model):
     team_1_wins = models.IntegerField(default=0)
     team_2_wins = models.IntegerField(default=0)
     def __str__(self):
-        string = '{}, week {}: {} vs {}'.format(
-            str(self.season), str(self.week), str(self.team_1), str(self.team_2)
+        string = '{} {}: {} vs {} {}'.format(
+            str(self.season), str(self.week), str(self.team_1), str(self.team_2),
+            str(self.date)
         )
         if self.team_1_wins + self.team_2_wins > 0:
             string += ': {} - {}'.format(str(self.team_1_wins), str(self.team_2_wins))
