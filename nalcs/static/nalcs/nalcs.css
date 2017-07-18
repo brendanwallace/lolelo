@@ -192,7 +192,7 @@ table.standings span.up:before {
 }
 
 table.standings span.up, table.standings span.down {
-    position: fixed;
+    position: absolute;
     margin-left: 5px;
     font-size: 60%;
 }
