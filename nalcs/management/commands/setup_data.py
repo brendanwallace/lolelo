@@ -264,9 +264,9 @@ def setup():
     ]
 
     spring_2017, _ = nalcs_models.Season.objects.get_or_create(
-        date=datetime.date(2017, 1, 1), name="Spring 2017")
+        date=datetime.date(2017, 1, 20), name="Spring 2017")
     summer_2017, _ = nalcs_models.Season.objects.get_or_create(
-        date=datetime.date(2017, 6, 1), name="Summer 2017")
+        date=datetime.date(2017, 6, 2), name="Summer 2017")
 
     for season, results in [
         (spring_2017, spring_2017_results), (summer_2017, summer_2017_results)

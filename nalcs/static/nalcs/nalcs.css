@@ -188,7 +188,7 @@ table.standings th.ascending:after {
 
 table.standings span.up:before {
     content: "▲+";
-    color: green;
+    color: rgb(47, 145, 14);
 }
 
 table.standings span.up, table.standings span.down {
@@ -198,7 +198,7 @@ table.standings span.up, table.standings span.down {
 }
 
 table.standings span.up {
-    color: green;
+    color: rgb(47, 145, 14);
 }
 
 table.standings span.down:before {
