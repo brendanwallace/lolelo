@@ -15,7 +15,7 @@ def index(request):
 def na_lcs(request):
     return shortcuts.redirect('nalcs')
 
-def add_match_predictions(match, latest_predictions):
+def add_predictions_to_match(match: nalcs_models.Match, latest_predictions) -> None:
     w1 =  util.expected_outcome(
         latest_predictions[match.team_1.id].rating,
         latest_predictions[match.team_2.id].rating
@@ -35,6 +35,16 @@ def add_match_predictions(match, latest_predictions):
     match.p_2_1 = '{0:.0f}%'.format(100 * p_2_1)
     match.p_1_2 = '{0:.0f}%'.format(100 * p_1_2)
     match.p_0_2 = '{0:.0f}%'.format(100 * p_0_2)
+
+class Week():
+    def __init__(self, week):
+        self.week = week
+        self.dates = []
+
+class Date():
+    def __init__(self, date):
+        self.date = date
+        self.matches = []
 
 
 def nalcs(request):
@@ -89,24 +99,35 @@ def nalcs(request):
             prediction.qualify_for_worlds_delta = '{:.1f}%'.format((qualify_for_worlds_delta)  * 100)
             prediction.qualify_for_worlds_delta_sign = 'down' if prediction.qualify_for_worlds_delta[0] == '-' else 'up'
 
-    # matches:
-    match_predictions_by_week = []
-    week = None
-    matches = None
-    for match in nalcs_models.Match.objects.filter(team_1_wins=0).filter(team_2_wins=0).order_by('game_number'):
-        add_match_predictions(match, latest_predictions)
-        if week != match.week:
-            week = match.week
-            matches = []
-            match_predictions_by_week.append({'title': 'week {}'.format(week), 'matches': matches})
-        matches.append(match)
-
+    # active_week is the latest week in which a game hasn't been played
+    active_week = None
+    # matches grouped by week, then by date, sorted by game number
+    all_matches = []
+    curr_week = Week(None)
+    curr_date = Date(None)
+    for match in nalcs_models.Match.objects.filter(season__name='Summer 2017').order_by('game_number'):
+        if curr_week.week != match.week:
+            curr_week = Week(match.week)
+            all_matches.append(curr_week)
+        if curr_date.date != match.date:
+            curr_date = Date(match.date) # 'title': match.date.strftime('%B %d')}
+            curr_week.dates.append(curr_date)
+        if not match.finished:
+            add_predictions_to_match(match, latest_predictions)
+            if not active_week:
+                active_week = match.week
+        curr_date.matches.append(match)
 
     context = {
         'teams': sorted([p for _, p in latest_predictions.items()], key=lambda t: t.rating, reverse=True),
-        'match_predictions_by_week': match_predictions_by_week,
+        'all_matches': all_matches,
         'predictions_selected': 'selected',
-        'last_updated': latest_predictions[nalcs_teams[0].id].last_updated.astimezone(pytz.timezone('US/Pacific')).strftime('%B %d, %Y at %I:%M %p'),
+        'last_updated': (
+            latest_predictions[nalcs_teams[0].id].last_updated.astimezone(
+                pytz.timezone('US/Pacific')).strftime('%B %d, %Y at %I:%M %p')
+        ),
+        # TODO - get this from the current date.
+        'week_to_toggle': active_week,
     }
     return shortcuts.render(request, 'nalcs/nalcs.html', context)
 

@@ -1,20 +1,17 @@
 
-function setupStandingsUpcomingSelection() {
-    document.getElementById("standings-select").onclick = function() {
-        document.getElementById("nalcs_standings_table").classList.remove("display-none");
-        document.getElementById("upcoming").classList.add("display-none");
-        document.getElementById("standings-select").classList.add("selected");
-        document.getElementById("upcoming-select").classList.remove("selected");
-    };
+// Toggle between standings/matches.
 
-    document.getElementById("upcoming-select").onclick = function() {
-        document.getElementById("upcoming").classList.remove("display-none");
-        document.getElementById("nalcs_standings_table").classList.add("display-none");
-        document.getElementById("upcoming-select").classList.add("selected");
-        document.getElementById("standings-select").classList.remove("selected");
-    };
+function toggleStandingsMatches(on, off) {
+    document.getElementById(on).classList.remove("display-none");
+    document.getElementById(off).classList.add("display-none");
+    document.getElementById(on + "-select").classList.add("selected");
+    document.getElementById(off + "-select").classList.remove("selected");
 }
-setupStandingsUpcomingSelection();
+
+
+toggleStandingsMatches("standings", "matches");
+
+// Standings table:
 
 function camelCaseToSpaced(camelCaseString) {
     return camelCaseString.replace(/([A-Z])/g, function(match) {
@@ -87,4 +84,16 @@ tds.selectAll('span')
     .attr('class', function(d) { return d.value.delta_sign })
     .attr('title', "change since 3 days ago");
 
-d3.select(".rating").classed("descending", true);
+function toggleWeek(week) {
+    var weekDivs = document.getElementsByClassName("week");
+    var weekToggles = document.getElementsByClassName("week-toggle");
+    for (var i = 0; i < weekDivs.length; i++) {
+        weekDivs[i].classList.add("display-none");
+        weekToggles[i].classList.remove("selected");
+    }
+    weekDivs[week - 1].classList.remove("display-none");
+    weekToggles[week - 1].classList.add("selected");
+}
+
+// This needs to be in the html:
+toggleWeek(weekToToggle);

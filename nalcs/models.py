@@ -40,6 +40,10 @@ class Match(models.Model):
         first_to = (self.best_of + 1) / 2
         return self.team_1_wins >= first_to or self.team_2_wins >= first_to
 
+    @property
+    def ongoing(self):
+        return not self.finished and self.team_1_wins + self.team_2_wins > 0
+
 class DailyPrediction(models.Model):
     date = models.DateField()
     team = models.ForeignKey('Team')

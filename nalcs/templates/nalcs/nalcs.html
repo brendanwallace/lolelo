@@ -10,38 +10,67 @@
   <p class="last-updated">Last updated {{ last_updated }}</p> <!--JUL. 4, 2017 AT 4:42 PM-->
 </div>
 
-<div class="content">
 <div class="nav">
-  <a id="standings-select" class="selected">Standings</a>
-  <a id="upcoming-select" class="">Upcoming Matches</a>
+  <a id="standings-select" class="selected" onclick="toggleStandingsMatches('standings', 'matches')">Standings</a>
+  <a id="matches-select" class="" onclick="toggleStandingsMatches('matches', 'standings')">Matches</a>
 </div>
 
-<table id="nalcs_standings_table" class="standings">
-  <thead>
-    <tr class="heading" id="nalcs_standings_headings_row">
-    </tr>
-  </thead>
-</table>
+<div id="standings" class="">
+  <table id="nalcs_standings_table" class="standings">
+    <thead>
+      <tr class="heading" id="nalcs_standings_headings_row">
+      </tr>
+    </thead>
+  </table>
+</div>
 
-<div id="upcoming" class="display-none">
-{% for week in match_predictions_by_week %}
-  <h3 class="week">{{ week.title }}</h3>
-  <table class="upcoming">
-  <tr><th></th><th>Chance of winning</th></tr>
-  {% for match in week.matches %}
+<div id="matches" class="display-none">
+<nav class="weeks">
+  {% for week in all_matches %}
+    <a class="week-toggle" 
+       onclick="toggleWeek({{ week.week }});">
+        Week {{ week.week }}
+    </a>
+  {% endfor %}
+</nav>
+
+{% for week in all_matches %}
+  <div class="week display-none" id="week-{{ week.week }}">
+  {% for by_date in week.dates %}
+    <h3 class="date">{{ by_date.date }}</h3>
+    <table class="matches">
+    <tr>
+      <th></th><th>Prediction/results</th>
+    </tr>
+    {% for match in by_date.matches %}
     <tr>
       <td class="match-name">{{ match.team_1 }} vs {{ match.team_2 }}</td>
-      <td class="win-percentages">
-        <img class="team-icon" src="{% get_static_prefix %}nalcs/{{ match.team_1 }}.png"/>
-        <span class="team">{{ match.team_1_win_p }}</span>
-        <img class="team-icon" src="{% get_static_prefix %}nalcs/{{ match.team_2 }}.png"/>
-        <span class="team">{{ match.team_2_win_p }}</span>
-      </td>
-    </tr>
+
+      {% if match.finished %}
+        <td class="match result">
+          <img class="team-icon" src="{% get_static_prefix %}nalcs/{{ match.team_1 }}.png"/>
+          <span class="wins {% if match.team_1_wins > match.team_2_wins %}winner{% endif %}">{{ match.team_1_wins }}</span>
+          <img class="team-icon" src="{% get_static_prefix %}nalcs/{{ match.team_2 }}.png"/>
+          <span class="wins {% if match.team_2_wins > match.team_1_wins %}winner{% endif %}">{{ match.team_2_wins }}</span>
+        </td>
+      {% elif match.ongoing %}
+        <td class="match ongoing">
+          <span>match is live!</span>
+        </td>
+      {% else %}
+        <td class="match prediction">
+          <img class="team-icon" src="{% get_static_prefix %}nalcs/{{ match.team_1 }}.png"/>
+          <span class="win-p">{{ match.team_1_win_p }}</span>
+          <img class="team-icon" src="{% get_static_prefix %}nalcs/{{ match.team_2 }}.png"/>
+          <span class="win-p">{{ match.team_2_win_p }}</span>
+        </td>
+      </tr>
+      {% endif %}
+    {% endfor %}
+    </table>
   {% endfor %}
-  </table>
+  </div>
 {% endfor %}
-</div>
 
 </div>
 
@@ -91,7 +120,9 @@
     },
   {% endfor %}
   ];
-</script>
+
+  var weekToToggle = {{ week_to_toggle }};
+  </script>
 <script src="{% static 'nalcs/nalcs.js' %}"></script>
 
 {% endblock %}

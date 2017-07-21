@@ -73,7 +73,7 @@ div.intro {
 }
 
 div.nav {
-    margin: 40px 0px;
+    margin-top: 40px;
     text-align: left;
     height: 50px;
     border-bottom: 1px solid black;
@@ -118,6 +118,7 @@ table.standings {
     text-align: left;
     border-collapse: collapse;
     width: 1024px;
+    margin-top: 40px;
 }
 
 table.standings th {
@@ -235,7 +236,34 @@ th.class {
 
 div.upcoming {
     text-align: center;
+}
 
+a.week-toggle {
+    margin-top: 10px;
+    display: inline-block;
+    width: 80px;
+    background-color: white;
+    box-shadow: none;
+    padding: 0px;
+    margin-right: 10px;
+    border: 1px solid #cdcdcd;
+    text-align: center;
+    font: 'Roboto';
+    font-size: 14px;
+    border-collapse: collapse;
+    line-height: 40px;
+    border-radius: 5px;
+}
+
+a.week-toggle.selected {
+    border: 1px solid rgb(100, 100, 100);
+    background-color: rgb(250, 250, 250);
+    font-weight: bold;
+}
+
+a.week-toggle:hover {
+    background-color: rgb(240, 240, 240);
+    cursor: pointer;
 }
 
 h3.week {
@@ -243,30 +271,45 @@ h3.week {
     font-size: 30px;
 }
 
-table.upcoming {
+table.matches {
     display: inline-block;
 }
 
-table.upcoming th {
+table.matches th {
     text-transform: uppercase;
     font-size: 12px;
     text-align: right;
 }
 
-table.upcoming td {
+table.matches td {
     border-top: 2px solid rgb(230, 230, 230);
     line-height: 50px;
     height: 50px;
 }
 
-table.upcoming td.match-name {
+table.matches td.match-name {
     width: 400px;
     text-align: left;
 }
 
-table.upcoming td.win-percentages {
+table.matches td.match {
     width: 200px;
     text-align: right;
+}
+
+span.win-p, span.wins {
+    width: 30px;
+}
+
+span.wins {
+    display: inline-block;
+    text-align: center;
+    height: 50px;
+    line-height: 50px;
+}
+
+span.winner {
+    font-weight: bold;
 }
 
 .display-none {
