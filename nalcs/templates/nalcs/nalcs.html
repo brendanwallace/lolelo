@@ -16,31 +16,57 @@
   <a id="upcoming-select" class="">Upcoming Matches</a>
 </div>
 
-<table id="nalcs_standings_table" class="standings">
-  <thead>
-    <tr class="heading" id="nalcs_standings_headings_row">
-    </tr>
-  </thead>
-</table>
+<div id="teams">
+  <table id="nalcs_standings_table" class="standings display-none">
+    <thead>
+      <tr class="heading" id="nalcs_standings_headings_row">
+      </tr>
+    </thead>
+  </table>
+</div>
 
-<div id="upcoming" class="display-none">
-{% for week in match_predictions_by_week %}
-  <h3 class="week">{{ week.title }}</h3>
-  <table class="upcoming">
-  <tr><th></th><th>Chance of winning</th></tr>
-  {% for match in week.matches %}
+<div id="matches" class="">
+<nav class="weeks">
+  {% for week in all_matches %}
+    <a id="{{ week.week }}">{{ week.title }}</a>
+  {% endfor %}
+</nav>
+
+{% for week in all_matches %}
+  <div class="week" id="{{ week.week }}">
+  {% for by_date in week.dates %}
+    <h3 class="date">{{ by_date.title }}</h3>
+    <table class="upcoming">
+    {% for match in by_date.matches %}
     <tr>
       <td class="match-name">{{ match.team_1 }} vs {{ match.team_2 }}</td>
-      <td class="win-percentages">
-        <img class="team-icon" src="{% get_static_prefix %}nalcs/{{ match.team_1 }}.png"/>
-        <span class="team">{{ match.team_1_win_p }}</span>
-        <img class="team-icon" src="{% get_static_prefix %}nalcs/{{ match.team_2 }}.png"/>
-        <span class="team">{{ match.team_2_win_p }}</span>
-      </td>
-    </tr>
+
+      {% if match.finished %}
+        <td class="match result">
+          <img class="team-icon" src="{% get_static_prefix %}nalcs/{{ match.team_1 }}.png"/>
+          <span class="team">{{ match.team_1_wins }}</span>
+          <img class="team-icon" src="{% get_static_prefix %}nalcs/{{ match.team_2 }}.png"/>
+          <span class="team">{{ match.team_2_wins }}</span>
+        </td>
+      {% elif match.ongoing %}
+        <td class="match ongoing">
+          <span>match ongoing!</span>
+        </td>
+      {% else %}
+        <td class="match prediction">
+          <img class="team-icon" src="{% get_static_prefix %}nalcs/{{ match.team_1 }}.png"/>
+          <span class="team">{{ match.team_1_win_p }}</span>
+          <img class="team-icon" src="{% get_static_prefix %}nalcs/{{ match.team_2 }}.png"/>
+          <span class="team">{{ match.team_2_win_p }}</span>
+        </td>
+      </tr>
+      {% endif %}
+    {% endfor %}
+    </table>
   {% endfor %}
-  </table>
+  </div>
 {% endfor %}
+
 </div>
 
 </div>
@@ -91,7 +117,41 @@
     },
   {% endfor %}
   ];
-</script>
+
+  var match_data = [
+    {% for w in all_matches %}
+    {
+      week: {{ w.week }},
+      dates: [
+        {% for d in w.dates %}
+          {
+            date: "{{ d.date }}",
+            matches: [
+              {% for m in d.matches %}
+              {
+                team_1: "{{ m.team_1.name }}",
+                team_2: "{{ m.team_2.name }}",
+                icon_1: "{% get_static_prefix %}nalcs/{{ m.team_1.name }}.png",
+                icon_2: "{% get_static_prefix %}nalcs/{{ m.team_2.name }}.png",
+                finished: {% if m.finished %}true{% else %}false{% endif %},
+                team_1_win_p: "{{ m.team_1_win_p | default:"" }}",
+                team_2_win_p: "{{ m.team_2_win_p | default:"" }}",
+                team_1_wins: {{ m.team_1_wins }},
+                team_2_wins: {{ m.team_2_wins }},
+
+              },
+              {% endfor %}
+            ],
+          },
+        {% endfor %}
+      ],
+    },
+    {% endfor %}
+  ]
+
+  
+  
+  </script>
 <script src="{% static 'nalcs/nalcs.js' %}"></script>
 
 {% endblock %}

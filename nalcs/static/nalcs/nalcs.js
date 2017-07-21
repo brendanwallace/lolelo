@@ -1,4 +1,6 @@
 
+// Toggle between standings/matches.
+
 function setupStandingsUpcomingSelection() {
     document.getElementById("standings-select").onclick = function() {
         document.getElementById("nalcs_standings_table").classList.remove("display-none");
@@ -15,6 +17,8 @@ function setupStandingsUpcomingSelection() {
     };
 }
 setupStandingsUpcomingSelection();
+
+// Standings table:
 
 function camelCaseToSpaced(camelCaseString) {
     return camelCaseString.replace(/([A-Z])/g, function(match) {
