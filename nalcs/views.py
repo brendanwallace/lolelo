@@ -50,7 +50,7 @@ def nalcs(request):
             .filter(team__in=nalcs_teams).order_by('-date')[:len(nalcs_teams)]
     }
 
-    one_week_ago = datetime.datetime.today().date() - datetime.timedelta(days=7)
+    one_week_ago = datetime.datetime.today().date() - datetime.timedelta(days=3)
     comparison_predictions = {
         p.team_id: p
         for p in 

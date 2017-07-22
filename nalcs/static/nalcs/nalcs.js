@@ -85,6 +85,6 @@ tds.selectAll('span')
     .append('span')
     .text(function(d) { return d.value.delta })
     .attr('class', function(d) { return d.value.delta_sign })
-    .attr('title', "change over previous week");
+    .attr('title', "change since 3 days ago");
 
 d3.select(".rating").classed("descending", true);
