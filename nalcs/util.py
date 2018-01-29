@@ -42,7 +42,7 @@ class SimulationTeam():
         return self.name
 
 
-def compare_simulation_team(a: SimulationTeam, b: SimulationTeam) -> int: 
+def compare_simulation_team(a, b):# a: SimulationTeam, b: SimulationTeam) -> int: 
     """
     Orders predictions for end-of-season standings.
 
