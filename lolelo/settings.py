@@ -41,9 +41,10 @@ SECRET_KEY = '%z#bt&d$^4(#cot#cuu6rcdh25)^du+@=vnh$+r!gjoozaczt='
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'lolelo.gg',
-    'www.lolelo.gg',
-    '192.168.0.14',
+    '*',
+    # 'lolelo.gg',
+    # 'www.lolelo.gg',
+    # '192.168.0.14',
 ]
 
 
