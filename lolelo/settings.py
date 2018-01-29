@@ -100,22 +100,9 @@ WSGI_APPLICATION = 'lolelo.wsgi.application'
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        # 'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        # 'NAME': 'myproject',
-        # 'USER': 'myprojectuser',
-        # 'PASSWORD': 'password',
-        # 'HOST': 'localhost',
-        # 'PORT': '',
-    }
+    # Update database configuration with $DATABASE_URL.
+    'default': dj_database_url.config(conn_max_age=500)
 }
-
-# Update database configuration with $DATABASE_URL.
-db_from_env = dj_database_url.config(conn_max_age=500)
-DATABASES['default'].update(db_from_env)
-print(DATABASES)
-
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
