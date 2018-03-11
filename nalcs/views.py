@@ -73,6 +73,7 @@ def nalcs(request):
 
     for team_id, prediction in latest_predictions.items():
         prediction.name = prediction.team.name
+        prediction.short = prediction.team.short
 
         prediction.rating_display = '{0:.0f}'.format(prediction.rating)
         prediction.make_playoffs_display = '{:.1f}%'.format(prediction.make_playoffs * 100)
@@ -105,7 +106,7 @@ def nalcs(request):
     all_matches = []
     curr_week = Week(None)
     curr_date = Date(None)
-    for match in nalcs_models.Match.objects.filter(season__name='Summer 2017').order_by('game_number'):
+    for match in nalcs_models.Match.objects.filter(season__name='Spring 2018').order_by('game_number'):
         if curr_week.week != match.week:
             curr_week = Week(match.week)
             all_matches.append(curr_week)
@@ -118,17 +119,21 @@ def nalcs(request):
                 active_week = match.week
         curr_date.matches.append(match)
 
+    last_updated = '(never)'
+    if nalcs_teams and latest_predictions:
+        last_updated = (
+            latest_predictions[nalcs_teams[0].id].last_updated.astimezone(
+                pytz.timezone('US/Pacific')).strftime('%B %d, %Y at %I:%M %p'))
+
     context = {
         'teams': sorted([p for _, p in latest_predictions.items()], key=lambda t: t.rating, reverse=True),
         'all_matches': all_matches,
         'predictions_selected': 'selected',
-        'last_updated': (
-            latest_predictions[nalcs_teams[0].id].last_updated.astimezone(
-                pytz.timezone('US/Pacific')).strftime('%B %d, %Y at %I:%M %p')
-        ),
+        'last_updated': last_updated,
         # TODO - get this from the current date.
         'week_to_toggle': active_week,
     }
+    print(context)
     return shortcuts.render(request, 'nalcs/nalcs.html', context)
 
 def about(request):

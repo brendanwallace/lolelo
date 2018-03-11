@@ -2,10 +2,9 @@ from django.db import models
 
 class Team(models.Model):
     name = models.CharField(max_length=200)
+    short = models.CharField(max_length=200)
     def __str__(self):
         return self.name
-    # this is pretty bad:
-    spring_championship_points = models.IntegerField(default=0)
 
 class Season(models.Model):
     name = models.CharField(max_length=200)
@@ -18,10 +17,9 @@ class Match(models.Model):
     team_1 = models.ForeignKey('Team', related_name='team_1_match')
     team_2 = models.ForeignKey('Team', related_name='team_2_match')
     week = models.IntegerField()
-    # TODO - this should really be date field not integer field:
-    game_number = models.IntegerField()
     date = models.DateField(null=True)
-    best_of = models.IntegerField()
+    game_number = models.IntegerField()
+    best_of = models.IntegerField(default=1)
     season = models.ForeignKey('Season')
     # results:
     team_1_wins = models.IntegerField(default=0)

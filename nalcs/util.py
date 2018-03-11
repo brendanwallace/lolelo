@@ -7,11 +7,11 @@ from nalcs import models as nalcs_models
 
 from django.db import transaction
 
-K_FACTOR = 20
+K_FACTOR = 100
 LOGISTIC_PARAMETER = 400
 INITIAL_RATING = 1500
 
-SEASONS_TO_SIMULATE = 100000
+SEASONS_TO_SIMULATE = 10000
 
 MATCHES_ONLY = False
 
@@ -25,7 +25,7 @@ def expected_outcome(team_1_rating, team_2_rating):
 
 class SimulationTeam():
     """
-    A utility class used to create a copy of a team for simulating the season.
+    Utility class used to create a copy of a team for simulating the season.
     """
     def __init__(self, predictions):
         self.name = predictions.team.name
@@ -33,7 +33,6 @@ class SimulationTeam():
         self.match_wins = predictions.match_wins
         self.game_wins = predictions.game_wins
         self.game_losses = predictions.game_losses
-        self.championship_points = predictions.championship_points
         # copying the dictionary...
         self.head_to_head = {a: b for a, b in predictions.head_to_head.items()}
 
@@ -129,10 +128,7 @@ def update_ratings_and_predictions(date):
         prediction, _ = nalcs_models.DailyPrediction.objects.get_or_create(team=team, date=date)
         predictions[team.name] = prediction
 
-    spring_matches = nalcs_models.Match.objects.filter(season__name="Spring 2017").order_by('game_number')
-    summer_matches = nalcs_models.Match.objects.filter(season__name="Summer 2017").order_by('game_number')
-
-    summer_begins = nalcs_models.Season.objects.get(name="Summer 2017").date
+    spring_matches = nalcs_models.Match.objects.filter(season__name="Spring 2018").order_by('game_number')
 
     # reset ratings and everything:
     for _, pred in predictions.items():
@@ -141,9 +137,10 @@ def update_ratings_and_predictions(date):
         pred.game_losses = 0
         pred.match_wins = 0
         pred.match_losses = 0
-        pred.championship_points = pred.team.spring_championship_points
+        # pred.championship_points = pred.team.spring_championship_points
         pred.head_to_head = {pred.team.name: 0 for _, pred in predictions.items()}
 
+    # update the existing matches
     for match in [m for m in spring_matches if date >= m.date and m.finished]:
         team_1_expected_wins = (
             expected_outcome(predictions[match.team_1.name].rating, predictions[match.team_2.name].rating) *
@@ -156,54 +153,21 @@ def update_ratings_and_predictions(date):
         )
         predictions[match.team_1.name].rating += K_FACTOR * (match.team_1_wins - team_1_expected_wins)
         predictions[match.team_2.name].rating += K_FACTOR * (match.team_2_wins - team_2_expected_wins)
-
-    # end early if it's not summer yet. this could maybe be cleaner
-    if date < summer_begins:
-        for _, prediction in predictions.items():
-            prediction.save()
-        return
-
-    # regress 50%
-    for _, pred in predictions.items():
-        pred.rating = 0.5 * INITIAL_RATING + 0.5 * pred.rating
-
-    # Update all the info for played matches of the current season.
-    for match in [m for m in summer_matches if date >= m.date and m.finished]:
-        # game record:
         predictions[match.team_1.name].game_wins += match.team_1_wins
         predictions[match.team_1.name].game_losses += match.team_2_wins
         predictions[match.team_2.name].game_wins += match.team_2_wins
         predictions[match.team_2.name].game_losses += match.team_1_wins
-        # match record:
-        
         if match.team_1_wins > match.team_2_wins:
             predictions[match.team_1.name].match_wins += 1
             predictions[match.team_2.name].match_losses += 1
         else:
             predictions[match.team_2.name].match_wins += 1
             predictions[match.team_1.name].match_losses += 1
-        team_1_expected_wins = (
-        expected_outcome(predictions[match.team_1.name].rating, predictions[match.team_2.name].rating) *
-            (match.team_1_wins + match.team_2_wins)
-        )
-        team_2_expected_wins = ( # should be the same as (res1 + res2) - team1_expected_wins
-            expected_outcome(predictions[match.team_2.name].rating, predictions[match.team_1.name].rating) *
-            (match.team_1_wins + match.team_2_wins)
-        )
-        predictions[match.team_1.name].rating += K_FACTOR * (match.team_1_wins - team_1_expected_wins)
-        predictions[match.team_2.name].rating += K_FACTOR * (match.team_2_wins - team_2_expected_wins)
-        # head to head:
-        if match.team_1_wins > match.team_2_wins:
-            predictions[match.team_1.name].head_to_head[match.team_2.name] += 1
-        else:
-            predictions[match.team_2.name].head_to_head[match.team_1.name] += 1
-
 
     for _, pred in predictions.items():
         pred.make_playoffs = 0.0
         pred.playoff_bye = 0.0
         pred.win_split = 0.0
-        pred.qualify_for_worlds = 0.0
 
     for _ in range(SEASONS_TO_SIMULATE):
         # set up data for this simulation
@@ -212,8 +176,8 @@ def update_ratings_and_predictions(date):
             for _, prediction in predictions.items()
         }
 
-        # simulate the remaining summer split
-        for match in [m for m in summer_matches if date < m.date or not m.finished]:
+        # simulate the remaining spring split
+        for match in [m for m in spring_matches if date < m.date or not m.finished]:
             simulate_match(simulation_teams[match.team_1.name], simulation_teams[match.team_2.name], 3, simulation_teams)
 
         # figure out who qualifies for playoffs:
@@ -251,34 +215,11 @@ def update_ratings_and_predictions(date):
         finish_3, finish_4 = simulate_match(semi_1_l, semi_2_l, 3, predictions)
 
         predictions[finish_1.name].win_split += 1
-        predictions[finish_1.name].qualify_for_worlds += 1
 
-        finish_2.championship_points += 90
-        finish_3.championship_points += 70
-        finish_4.championship_points += 40
-        finish_5_a.championship_points += 20
-        finish_5_b.championship_points += 20
 
-        simulation_teams.remove(finish_1)
-        simulation_teams.sort(key=lambda sim_team: sim_team.championship_points, reverse=True)
-        predictions[simulation_teams[0].name].qualify_for_worlds += 1
-
-        # gauntlet:
-        gauntlet_1 = simulation_teams[1]
-        gauntlet_2 = simulation_teams[2]
-        gauntlet_3 = simulation_teams[3]
-        gauntlet_4 = simulation_teams[4]
-
-        adv, _ = simulate_match(gauntlet_4, gauntlet_3, 3, predictions)
-        adv, _ = simulate_match(adv, gauntlet_2, 3, predictions)
-        qualify, _ = simulate_match(adv, gauntlet_1, 3, predictions)
-
-        predictions[qualify.name].qualify_for_worlds += 1
-
-    # calculate the percentages from that:
+    # # calculate the percentages from that:
     for _, prediction in predictions.items():
         prediction.make_playoffs = prediction.make_playoffs / SEASONS_TO_SIMULATE
         prediction.playoff_bye = prediction.playoff_bye / SEASONS_TO_SIMULATE
         prediction.win_split = prediction.win_split / SEASONS_TO_SIMULATE
-        prediction.qualify_for_worlds = prediction.qualify_for_worlds / SEASONS_TO_SIMULATE
         prediction.save()

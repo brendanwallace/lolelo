@@ -48,9 +48,9 @@
 
       {% if match.finished %}
         <td class="match result">
-          <img class="team-icon" src="{% get_static_prefix %}nalcs/{{ match.team_1 }}.png"/>
+          <img class="team-icon" src="{% get_static_prefix %}nalcs/{{ match.team_1.short }}/icon.png"/>
           <span class="wins {% if match.team_1_wins > match.team_2_wins %}winner{% endif %}">{{ match.team_1_wins }}</span>
-          <img class="team-icon" src="{% get_static_prefix %}nalcs/{{ match.team_2 }}.png"/>
+          <img class="team-icon" src="{% get_static_prefix %}nalcs/{{ match.team_2.short }}/icon.png"/>
           <span class="wins {% if match.team_2_wins > match.team_1_wins %}winner{% endif %}">{{ match.team_2_wins }}</span>
         </td>
       {% elif match.ongoing %}
@@ -59,9 +59,9 @@
         </td>
       {% else %}
         <td class="match prediction">
-          <img class="team-icon" src="{% get_static_prefix %}nalcs/{{ match.team_1 }}.png"/>
+          <img class="team-icon" src="{% get_static_prefix %}nalcs/{{ match.team_1.short }}/icon.png"/>
           <span class="win-p">{{ match.team_1_win_p }}</span>
-          <img class="team-icon" src="{% get_static_prefix %}nalcs/{{ match.team_2 }}.png"/>
+          <img class="team-icon" src="{% get_static_prefix %}nalcs/{{ match.team_2.short }}/icon.png"/>
           <span class="win-p">{{ match.team_2_win_p }}</span>
         </td>
       </tr>
@@ -83,7 +83,7 @@
       team: {
         display: "{{ team.name }}",
         sort: "{{ team.name }}",
-        icon: "{% get_static_prefix %}nalcs/{{ team.name }}.png",
+        icon: "{% get_static_prefix %}nalcs/{{ team.short }}/icon.png",
       },
       rating: {
         display: "{{ team.rating_display }}",

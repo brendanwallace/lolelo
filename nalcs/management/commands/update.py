@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 
 from django.core.management.base import BaseCommand
 
@@ -9,8 +9,8 @@ class Command(BaseCommand):
         parser.add_argument(
             '--date',
             dest='date',
-            type=lambda s: datetime.strptime(s, '%Y-%m-%d').date(),
-            default=datetime.today().date()
+            type=lambda s: datetime.datetime.strptime(s, '%Y/%m/%d').date(),
+            default=datetime.datetime.today().date()
         )
 
     def handle(self, *args, **options):
