@@ -7,7 +7,7 @@ from nalcs import models as nalcs_models
 
 from django.db import transaction
 
-K_FACTOR = 100
+K_FACTOR = 50
 LOGISTIC_PARAMETER = 400
 INITIAL_RATING = 1500
 
