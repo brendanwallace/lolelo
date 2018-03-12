@@ -41,16 +41,17 @@ class Command(BaseCommand):
                     date = datetime.datetime.strptime(row[4], '%Y/%m/%d').date()
                 if len(row) >= 6:
                     week =  int(row[5])
-                models.Match.objects.get_or_create(
+                match, _ = models.Match.objects.get_or_create(
                     team_1=models.Team.objects.get(short=short_1),
                     team_2=models.Team.objects.get(short=short_2),
                     date=date,
                     season=season,
                     week=week,
-                    game_number=game_number,
-                    team_1_wins=team_1_wins,
-                    team_2_wins=team_2_wins,
+                    game_number=game_number
                 )
+                match.team_1_wins=team_1_wins
+                match.team_2_wins=team_2_wins
+                match.save()
                 created += 1
 
         print("success. got or created {} matches.".format(created))
